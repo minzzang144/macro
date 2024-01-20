@@ -1,0 +1,17 @@
+{
+    "name": "macro",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "start:key-escape": "node ./keyescape.js",
+        "start:sign-escape": "node ./signescape.js",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "playwright": "^1.36.1"
+    }
+}
