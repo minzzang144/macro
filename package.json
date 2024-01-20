@@ -3,16 +3,21 @@
     "version": "1.0.0",
     "description": "",
     "main": "index.js",
+    "workspaces": [
+        "packages/*"
+    ],
     "scripts": {
         "start:key-escape": "npx lerna run start --scope @macro/key-escape",
         "start:sign-escape": "npx lerna run start --scope @macro/sign-escape",
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "start:threejs-journey": "npx lerna run start --scope @macro/threejs-journey"
     },
     "keywords": [],
     "author": "",
     "license": "ISC",
     "dependencies": {
-        "playwright": "^1.36.1"
+        "axios": "^1.6.5",
+        "playwright": "^1.36.1",
+        "puppeteer": "^21.7.0"
     },
     "devDependencies": {
         "lerna": "^8.0.2"

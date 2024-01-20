@@ -1,0 +1,31 @@
+{
+    "name": "@macro/threejs-journey",
+    "version": "0.0.0",
+    "description": "Now I’m the model of a modern major general / The venerated Virginian veteran whose men are all / Lining up, to put me up on a pedestal / Writin’ letters to relatives / Embellishin’ my elegance and eloquence / But the elephant is in the room / The truth is in ya face when ya hear the British cannons go / BOOM",
+    "keywords": [],
+    "author": "ShigastuEl <shigatsu970704@gmail.com>",
+    "license": "ISC",
+    "main": "src/index.js",
+    "type": "module",
+    "directories": {
+        "src": "src"
+    },
+    "files": [
+        "src"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/ShigatsuEl/macro.git"
+    },
+    "scripts": {
+        "start": "node ./src/index.js"
+    },
+    "bugs": {
+        "url": "https://github.com/ShigatsuEl/macro/issues"
+    },
+    "homepage": "https://github.com/ShigatsuEl/macro#readme",
+    "dependencies": {
+        "node-fetch": "^3.3.2",
+        "webvtt-parser": "^2.2.0"
+    }
+}
