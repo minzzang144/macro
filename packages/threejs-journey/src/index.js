@@ -1,7 +1,7 @@
 import { chromium } from "playwright";
 import nodeFetch from "node-fetch";
 import WebVTT from "webvtt-parser";
-import { writeFile } from "fs/promises";
+import xlsx from "xlsx";
 
 (async () => {
     const browser = await chromium.launch({ headless: false });
@@ -39,33 +39,36 @@ import { writeFile } from "fs/promises";
         (element) => element.content
     );
 
-    let vttString = `${ogTitleContent}\n\n`;
+    // XLSX 파일 생성
+    const data = []; // Initialize an empty array to hold our data
     for (let cue of tree.cues) {
-        const text = cue.text;
-        const translatedText = await translate(text);
-        cue.text = translatedText;
-        vttString += `${cue.startTime} --> ${cue.endTime}\n${cue.text}\n\n`;
+        const row = [`${cue.startTime} --> ${cue.endTime}`, cue.text];
+        data.push(row);
     }
 
-    await writeFile("translated_subtitles.txt", vttString);
+    let worksheet = xlsx.utils.aoa_to_sheet(data);
+    let workbook = xlsx.utils.book_new();
+    xlsx.utils.book_append_sheet(workbook, worksheet, "Subtitles");
+
+    xlsx.writeFile(workbook, `${ogTitleContent}.xlsx`);
 })();
 
-async function translate(text) {
-    const response = await fetch("https://openapi.naver.com/v1/papago/n2mt", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "X-Naver-Client-Id": process.env.NAVER_CLIENT_ID,
-            "X-Naver-Client-Secret": process.env.NAVER_CLIENT_SECRET,
-        },
-        body: JSON.stringify({
-            source: "en",
-            target: "ko",
-            text: text,
-        }),
-    });
+// NOTE: 파파고 API를 사용하려 했으나 무료로 사용할 수 있는 API가 없어서 사용하지 않음
+// async function translate(text) {
+//     const response = await fetch("https://openapi.naver.com/v1/papago/n2mt", {
+//         method: "POST",
+//         headers: {
+//             "Content-Type": "application/json",
+//             "X-Naver-Client-Id": process.env.NAVER_CLIENT_ID,
+//             "X-Naver-Client-Secret": process.env.NAVER_CLIENT_SECRET,
+//         },
+//         body: JSON.stringify({
+//             source: "en",
+//             target: "ko",
+//             text: text,
+//         }),
+//     });
 
-    const data = await response.json();
-    console.log({ response, data });
-    return data.message?.result?.translatedText ?? text;
-}
+//     const data = await response.json();
+//     return data.message?.result?.translatedText ?? text;
+// }
