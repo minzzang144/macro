@@ -42,7 +42,9 @@ import xlsx from "xlsx";
     // XLSX 파일 생성
     const data = []; // Initialize an empty array to hold our data
     for (let cue of tree.cues) {
-        const row = [`${cue.startTime} --> ${cue.endTime}`, cue.text];
+        const startTime = formatTime(cue.startTime);
+        const endTime = formatTime(cue.endTime);
+        const row = [`${startTime} --> ${endTime}`, cue.text];
         data.push(row);
     }
 
@@ -51,7 +53,26 @@ import xlsx from "xlsx";
     xlsx.utils.book_append_sheet(workbook, worksheet, "Subtitles");
 
     xlsx.writeFile(workbook, `${ogTitleContent}.xlsx`);
+    console.log("Done!");
 })();
+
+function formatTime(seconds) {
+    seconds = Math.floor(seconds);
+    const hours = Math.floor(seconds / 3600);
+    seconds %= 3600;
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+
+    let timeString = "";
+    if (hours > 0) {
+        timeString += `${hours}:`;
+    }
+    timeString += `${String(minutes).padStart(2, "0")}:${String(
+        remainingSeconds
+    ).padStart(2, "0")}`;
+
+    return timeString;
+}
 
 // NOTE: 파파고 API를 사용하려 했으나 무료로 사용할 수 있는 API가 없어서 사용하지 않음
 // async function translate(text) {
