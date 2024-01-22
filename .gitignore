@@ -132,5 +132,5 @@ dist
 # xlsx files
 *.xlsx
 
-# number files
-*.numbers
+# vtt files
+*.vtt
