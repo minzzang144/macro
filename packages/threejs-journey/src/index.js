@@ -1,9 +1,22 @@
 import { chromium } from "playwright";
+import fs from "fs";
+import path, { dirname } from "path";
+import { fileURLToPath } from "url";
 import nodeFetch from "node-fetch";
 import WebVTT from "webvtt-parser";
 import xlsx from "xlsx";
 
-(async () => {
+const method = {
+    1: macro,
+    2: writeXlsx,
+};
+
+(() => {
+    const number = 2;
+    method[number]();
+})();
+
+async function macro() {
     const browser = await chromium.launch({ headless: false });
     const context = await browser.newContext();
     const page = await context.newPage();
@@ -54,7 +67,42 @@ import xlsx from "xlsx";
 
     xlsx.writeFile(workbook, `${ogTitleContent}.xlsx`);
     console.log("Done!");
-})();
+}
+
+function writeXlsx() {
+    // VTT 파일의 경로
+    const ogTitleContent = "05 — Animations";
+    const __filename = fileURLToPath(import.meta.url);
+    const __dirname = dirname(__filename);
+    const vttFilePath = path.join(__dirname, `../${ogTitleContent}.vtt`);
+
+    // VTT 파일 읽기
+    fs.readFile(vttFilePath, "utf8", (err, vttContent) => {
+        if (err) {
+            console.error(`Error reading file from disk: ${err}`);
+        } else {
+            // VTT 데이터 파싱
+            const parser = new WebVTT.WebVTTParser();
+            const tree = parser.parse(vttContent);
+
+            // XLSX 파일 생성
+            const data = []; // Initialize an empty array to hold our data
+            for (let cue of tree.cues) {
+                const startTime = formatTime(cue.startTime);
+                const endTime = formatTime(cue.endTime);
+                const row = [`${startTime} --> ${endTime}`, cue.text];
+                data.push(row);
+            }
+
+            let worksheet = xlsx.utils.aoa_to_sheet(data);
+            let workbook = xlsx.utils.book_new();
+            xlsx.utils.book_append_sheet(workbook, worksheet, "Subtitles");
+
+            xlsx.writeFile(workbook, `${ogTitleContent}.xlsx`);
+        }
+    });
+    console.log("Done!");
+}
 
 function formatTime(seconds) {
     seconds = Math.floor(seconds);
@@ -75,21 +123,21 @@ function formatTime(seconds) {
 }
 
 // NOTE: 파파고 API를 사용하려 했으나 무료로 사용할 수 있는 API가 없어서 사용하지 않음
-// async function translate(text) {
-//     const response = await fetch("https://openapi.naver.com/v1/papago/n2mt", {
-//         method: "POST",
-//         headers: {
-//             "Content-Type": "application/json",
-//             "X-Naver-Client-Id": process.env.NAVER_CLIENT_ID,
-//             "X-Naver-Client-Secret": process.env.NAVER_CLIENT_SECRET,
-//         },
-//         body: JSON.stringify({
-//             source: "en",
-//             target: "ko",
-//             text: text,
-//         }),
-//     });
+async function translate(text) {
+    const response = await fetch("https://openapi.naver.com/v1/papago/n2mt", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-Naver-Client-Id": process.env.NAVER_CLIENT_ID,
+            "X-Naver-Client-Secret": process.env.NAVER_CLIENT_SECRET,
+        },
+        body: JSON.stringify({
+            source: "en",
+            target: "ko",
+            text: text,
+        }),
+    });
 
-//     const data = await response.json();
-//     return data.message?.result?.translatedText ?? text;
-// }
+    const data = await response.json();
+    return data.message?.result?.translatedText ?? text;
+}
