@@ -17,7 +17,7 @@ const { chromium } = require("playwright");
   const context = await browser.newContext();
   const page = await context.newPage();
 
-  await page.goto("https://dpsnnn-s.imweb.me/reserve_ss");
+  await page.goto("https://www.dpsnnn.com/reserve_g");
 
   // 첫 번째 페이지
 
