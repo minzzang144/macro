@@ -3,14 +3,14 @@ const { chromium } = require("playwright");
 (async () => {
   const FIRST_PAGE = {
     예약_날짜: {
-      행: 4,
-      열: 2,
-      시간: 2,
+      행: 6,
+      열: 5,
+      시간: 17,
     },
   };
   const THIRD_PAGE = {
-    이름: "박원재",
-    연락처: "010337298499",
+    이름: "이민찬",
+    연락처: "01044995173",
     인원: 1,
   };
   const browser = await chromium.launch({ headless: false });
@@ -40,6 +40,8 @@ const { chromium } = require("playwright");
   await page.waitForSelector(".btn.non_btn._guest_payment");
   const 비회원_예약_버튼 = await page.$(".btn.non_btn._guest_payment");
   await 비회원_예약_버튼.click();
+
+  await page.waitForTimeout(100);
 
   // 세 번째 페이지
   await page.waitForSelector("input[name='orderer_name']");
